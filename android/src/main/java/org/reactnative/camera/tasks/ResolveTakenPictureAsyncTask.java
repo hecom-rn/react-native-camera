@@ -91,7 +91,7 @@ public class ResolveTakenPictureAsyncTask extends AsyncTask<Void, Void, Writable
 
                 if(orientation != ExifInterface.ORIENTATION_UNDEFINED){
                     loadBitmap();
-                    mBitmap = rotateBitmap(mBitmap, getImageRotation(orientation));
+                //   mBitmap = rotateBitmap(mBitmap, getImageRotation(orientation));
                     orientationChanged = true;
                 }
             }
@@ -239,6 +239,8 @@ public class ResolveTakenPictureAsyncTask extends AsyncTask<Void, Void, Writable
                     }
                     File imageFile = new File(filePath);
                     String fileUri = Uri.fromFile(imageFile).toString();
+                    int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                    setPictureDegreeZero(filePath, orientation);
                     response.putString("uri", fileUri);
                 }
 
@@ -357,4 +359,13 @@ public class ResolveTakenPictureAsyncTask extends AsyncTask<Void, Void, Writable
         }
     }
 
+   void setPictureDegreeZero(String path, int orientation) {
+            try {
+                ExifInterface exifInterface = new ExifInterface(path);
+                exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(orientation));
+                exifInterface.saveAttributes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
 }
